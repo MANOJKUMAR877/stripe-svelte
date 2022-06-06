@@ -1,27 +1,35 @@
 <script>
+   import { InlineLoading } from "carbon-components-svelte";
   import { onMount } from "svelte";
   let value = [];
+  let loading = false;
   onMount(async () => {
+    loading = true;
     let data = await fetch("http://localhost:1337/api/reviews/");
     let v = await data.json();
     value = v.data;
+    loading = false;
   });
 </script>
 
-<ul class="list">
-  {#each value as { id, attributes }}
-    <li class="elements">
-      <div class="card">
-        <div class="container">
-          <h4><b>Title : {attributes.title}</b></h4>
-          <p>Rating : {attributes.rating}</p>
-          <hr />
-          <p>Body : {attributes.body}</p>
+{#if loading}
+<InlineLoading status="active" description="Submitting..." />
+{:else}
+  <ul class="list">
+    {#each value as { id, attributes }}
+      <li class="elements">
+        <div class="card">
+          <div class="container">
+            <h4><b>Title : {attributes.title}</b></h4>
+            <p>Rating : {attributes.rating}</p>
+            <hr />
+            <p>Body : {attributes.body}</p>
+          </div>
         </div>
-      </div>
-    </li>
-  {/each}
-</ul>
+      </li>
+    {/each}
+  </ul>
+{/if}
 
 <style>
   .elements {
