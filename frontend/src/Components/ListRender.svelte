@@ -1,8 +1,16 @@
 <script>
-   import { InlineLoading } from "carbon-components-svelte";
+  import { InlineLoading } from "carbon-components-svelte";
   import { onMount } from "svelte";
+  import { identity } from "svelte/internal";
+  export let token
   let value = [];
+  let editId = "";
   let loading = false;
+  let data = {
+    title: "",
+    rating: "",
+    body: "",
+  };
   onMount(async () => {
     loading = true;
     let data = await fetch("http://localhost:1337/api/reviews/");
@@ -10,21 +18,63 @@
     value = v.data;
     loading = false;
   });
+  const edit = (e) => {
+    editId = e;
+    console.log(value, editId);
+    let find = value.filter((v) => (v.id === editId ? v.attributes : null));
+    if (find && find[0] && find[0].attributes) {
+      data.title = find[0].attributes.title;
+      data.rating = find[0].attributes.rating;
+      data.body = find[0].attributes.body;
+    }
+  };
+  const save = (e) => {
+    fetch(`http://localhost:1337/api/reviews/${e}`, {
+      method: "PUT",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ data: data }),
+    });
+    editId=""
+  };
 </script>
 
 {#if loading}
-<InlineLoading status="active" description="Submitting..." />
+  <InlineLoading status="active" description="Submitting..." />
 {:else}
   <ul class="list">
     {#each value as { id, attributes }}
       <li class="elements">
         <div class="card">
-          <div class="container">
-            <h4><b>Title : {attributes.title}</b></h4>
-            <p>Rating : {attributes.rating}</p>
-            <hr />
-            <p>Body : {attributes.body}</p>
-          </div>
+          {#if editId === id}
+            <div class="container">
+              <h4><b>Title : <input bind:value={data.title} /></b></h4>
+              <p>Rating : <input bind:value={data.rating} /></p>
+              <hr />
+              <p>Body : <textarea bind:value={data.body} /></p>
+            </div>
+            <button
+              on:click={() => {
+                save(id);
+              }}>Save</button
+            >
+          {:else}
+            <div class="container">
+              <h4><b>Title : {attributes.title}</b></h4>
+              <p>Rating : {attributes.rating}</p>
+              <hr />
+              <p>Body : {attributes.body}</p>
+            </div>
+            <button
+              on:click={() => {
+                edit(id);
+              }}>Edit</button
+            >
+          {/if}
         </div>
       </li>
     {/each}

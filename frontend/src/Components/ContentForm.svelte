@@ -6,7 +6,7 @@
     body: "",
   };
   const submit = () => {
-    console.log("fhgjk");
+    
     fetch("http://localhost:1337/api/reviews/", {
       method: "POST",
       mode: "cors",

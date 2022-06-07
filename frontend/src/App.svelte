@@ -24,7 +24,7 @@ import ContentForm from "./Components/ContentForm.svelte";
 <br />
 
 <hr />
-<ListRender />
+<ListRender token={token} />
 <hr />
 <br/>
 <ContentForm token={token}/>
