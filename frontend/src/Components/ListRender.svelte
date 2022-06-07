@@ -1,8 +1,9 @@
 <script>
   import { InlineLoading } from "carbon-components-svelte";
+  import { Toast } from "flowbite-svelte";
   import { onMount } from "svelte";
   import { identity } from "svelte/internal";
-  export let token
+  export let token;
   let value = [];
   let editId = "";
   let loading = false;
@@ -39,9 +40,14 @@
       },
       body: JSON.stringify({ data: data }),
     });
-    editId=""
+    editId = "";
   };
 </script>
+
+<Toast >
+  <span slot="icon" />
+  <span slot="text"> Transition type: fade </span>
+</Toast>
 
 {#if loading}
   <InlineLoading status="active" description="Submitting..." />
