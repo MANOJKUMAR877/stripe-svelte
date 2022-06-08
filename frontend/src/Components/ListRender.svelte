@@ -42,9 +42,21 @@
     });
     editId = "";
   };
+  const deletes = (e) => {
+    
+    fetch(`http://localhost:1337/api/reviews/${e}`, {
+      method: "DELETE",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  };
 </script>
 
-<Toast >
+<Toast>
   <span slot="icon" />
   <span slot="text"> Transition type: fade </span>
 </Toast>
@@ -55,6 +67,7 @@
   <ul class="list">
     {#each value as { id, attributes }}
       <li class="elements">
+        <button on:click={() => deletes(id)}>Delete</button>
         <div class="card">
           {#if editId === id}
             <div class="container">
